@@ -25,6 +25,10 @@ Date.prototype.nextMonthDate = function() {
   return nextDate;
 }
 
+randomFromTo = function(from, to){
+  return Math.floor(Math.random() * (to - from + 1) + from);
+};
+
 /////////////////////////  EVENT ///////////////////////////////
 Event = function(message) {
   this.message = message;
@@ -44,6 +48,10 @@ Calendar = function (format) {
     return this.current;
   }
 
+  this._cleanEvents = function() {
+    this.events = {};
+  }
+
   this.moveToPreviousMonth = function() {
     this.current = this.current.previousMonthDate();
     return this;
@@ -54,7 +62,7 @@ Calendar = function (format) {
     return this;
   }
 
-  this.addEvents = function (/*Array(Event)*/ evs, /*Mixed*/ key) {
+  this.addEvents = function (/*Array(Event)*/ evs) {
     this.events = evs;
     return this;
   }
@@ -74,14 +82,28 @@ ServerProxy = function(baseUrl, engine, method) {
 
   this.cache = {};
 
-  this.get = function(/*Mixed*/ key) {
+  // Change using AJAX when you need it
+  this.get = function(/*Mixed*/ key, /*Delete this field*/ date) {
     if(_.isUndefined(this.cache[key])) {
       // Get elements from server
       var elements = new Array();
-      for (i = 0; i < 5; i++) {
-        elements.push(new Event('Alert ' + i + ' with key ' + key));
-      }
 
+      if (this.method == 'POST') {
+        // Dynamic calendar emulate
+        for(i = 0; i < date.daysInMonth(); i++) {
+          var days = new Array();
+          for(j = 0; j < randomFromTo(0,3); j++) {
+            days.push(new Event('Dynamic Alert ' + j +'  of ' + i + '-' + date.format('mm-yyyy')));
+          }
+
+          elements[i] = days;
+        }
+      } else {
+
+        for (i = 0; i < randomFromTo(1,6); i++) {
+          elements.push(new Event('Static Alert of month ' + date.format('mm-yyyy')));
+        }
+      }
       // SaveInfo into cache
       this.cache[key] = elements;
     }
@@ -90,7 +112,7 @@ ServerProxy = function(baseUrl, engine, method) {
   }
 }
 
-
+////////////////////////////////// VIEWS /////////////////////////////////////////////
 EventCalendarListView = function(container) {
   var self = this;
 
@@ -120,8 +142,9 @@ EventCalendarTableView = function(container) {
   this.refresh = function(/*EventCalendar*/ eventCalendar) {
     // Data to draw
     var data = {
-      events : eventCalendar.dynamicCalendar.events
-    }
+      events : calendar.dynamicCalendar.events,
+      date: calendar.dynamicCalendar.currentDate()
+    };
 
     var template = self.el.html();
     self.container.empty().append(_.template(template, data));
@@ -148,7 +171,7 @@ EventCalendar = function(container) {
     dynamicCalendar: new ServerProxy(
       'http://events.localhost.com/rest/dynamic-events',
       $,
-      'GET'
+      'POST'
     )
   };
 
@@ -163,11 +186,19 @@ EventCalendar = function(container) {
       // Look for events by date (using calendar format)
       // Ex: proxy.get('01-2012') --> Give me events generated in January of 2012
       var eventsKey = calendar.currentDate().format(calendarFormat);
-      var events = proxy.get(eventsKey);
+      var events = proxy.get(eventsKey, /*Delete*/ calendar.currentDate());
 
       // Insert events into specific calendar
-      calendar.addEvents(events, eventsKey);
+      calendar.addEvents(events);
     });
+
+    this.updateDates(this.dynamicCalendar.currentDate());
+  }
+
+  this.updateDates = function(date) {
+    $('#date_prev span.month').html(this.staticCalendar.currentDate().previousMonthDate().format('mmmm yyyy'));
+    $('#date_current span.month').html(this.staticCalendar.currentDate().format('mmmm yyyy'));
+    $('#date_next span.month').html(this.staticCalendar.currentDate().nextMonthDate().format('mmmm yyyy'));
   }
 
   this.moveToLeft = function() {
@@ -208,7 +239,7 @@ EventCalendar = function(container) {
   var dynamicCalendarView = new EventCalendarTableView($('#dynamic_alerts'));
   this.subscribe({
     'moveToLeft' : dynamicCalendarView.refresh,
-    'moveToRight' : dynamicCalendarView.refresh,
+    'moveToRight' : dynamicCalendarView.refresh
   });
-  this.dynamicCalendar = new Calendar('dd-mm-yyyy');
+  this.dynamicCalendar = new Calendar('mm-yyyy');
 }

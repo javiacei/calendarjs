@@ -20,7 +20,12 @@
     <div id="container">
       <div id="alerts_section">
         <h2>Alertas</h2>
-        <div id="dates"></div>
+        <div id="dates">
+          <p id="date_prev"><span class="month"></span><span class="year"></span></p>
+          <p id="date_current"><span class="month"></span><span class="year"></span></p>
+          <p id="date_next"><span class="month"></span><span class="year"></span></p>
+        </div>
+
         <div id="alerts_calendar_content">
           <span class='left arrow'>
             <a></a>
@@ -45,7 +50,42 @@
     </script>
 
     <script type="text/template" id="calendar-table">
-      Table!!!
+      <table>
+        <tbody>
+          <% _.each(events, function(evs, day){ %>
+            <tr>
+              <td>
+                <% if(_.isUndefined(evs[0])) {%>
+                  &nbsp;
+                <% }else{ %>
+                  <%= evs[0].message %>
+                <% } %>
+              </td>
+              <td>
+                <% if(_.isUndefined(evs[1])) {%>
+                  &nbsp;
+                <% }else{ %>
+                  <%= evs[1].message %>
+                <% } %>
+              </td>
+              <td>
+                <% if(_.isUndefined(evs[2])) {%>
+                  &nbsp;
+                <% }else{ %>
+                  <%= evs[2].message %>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+
+        <!-- Days -->
+        <tfoot>
+          <% for (i = 1; i <= date.daysInMonth(); i++) { %>
+            <td><%= i %></td>
+          <% } %>
+        </tfoot>
+      </table>
     </script>
 
   </body>
