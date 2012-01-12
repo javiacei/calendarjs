@@ -1,77 +1,3 @@
-dateFormat.i18n = {
-	dayNames: [
-		"Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab",
-		"Domingo", "Lunes", "Jueves", "Miércoles", "Jueves", "Viernes", "Sábado"
-	],
-	monthNames: [
-		"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-		"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-	]
-};
-
-Date.prototype.daysInMonth = function () {
-   return new Date(this.getFullYear(), this.getMonth()+1, 0).getDate()
-}
-
-Date.prototype.previousMonthDate = function() {
-  previousDate = new Date(this);
-  previousDate.setMonth(this.getMonth() - 1);
-  return previousDate;
-}
-
-Date.prototype.nextMonthDate = function() {
-  nextDate = new Date(this);
-  nextDate.setMonth(this.getMonth() + 1);
-  return nextDate;
-}
-
-randomFromTo = function(from, to){
-  return Math.floor(Math.random() * (to - from + 1) + from);
-};
-
-/////////////////////////  EVENT ///////////////////////////////
-Event = function(message) {
-  this.message = message;
-}
-
-/////////////////////////  CALENDAR ///////////////////////////////
-Calendar = function (format) {
-  var self = this;
-
-  this.current = new Date();
-
-  this.format = format;
-
-  this.events = null;
-
-  this.currentDate = function() {
-    return this.current;
-  }
-
-  this._cleanEvents = function() {
-    this.events = {};
-  }
-
-  this.moveToPreviousMonth = function() {
-    this.current = this.current.previousMonthDate();
-    return this;
-  }
-
-  this.moveToNextMonth = function() {
-    this.current = this.current.nextMonthDate();
-    return this;
-  }
-
-  this.addEvents = function (/*Array(Event)*/ evs) {
-    this.events = evs;
-    return this;
-  }
-
-  this.hasEvents = function() {
-    return _.size(this.events) > 0;
-  }
-}
-
 /////////////////////////  SERVER PROXY ///////////////////////////////
 ServerProxy = function(baseUrl, engine, method) {
   this.baseUrl = baseUrl;
@@ -93,7 +19,7 @@ ServerProxy = function(baseUrl, engine, method) {
         for(i = 0; i < date.daysInMonth(); i++) {
           var days = new Array();
           for(j = 0; j < randomFromTo(0,3); j++) {
-            days.push(new Event('Dynamic Alert ' + j +'  of ' + i + '-' + date.format('mm-yyyy')));
+            days.push(new Event({message: 'Dynamic Alert ' + j +'  of ' + i + '-' + date.format('mm-yyyy')}));
           }
 
           elements[i] = days;
@@ -101,7 +27,7 @@ ServerProxy = function(baseUrl, engine, method) {
       } else {
 
         for (i = 0; i < randomFromTo(1,6); i++) {
-          elements.push(new Event('Static Alert of month ' + date.format('mm-yyyy')));
+          elements.push(new Event({message: 'Static Alert of month ' + date.format('mm-yyyy')}));
         }
       }
       // SaveInfo into cache

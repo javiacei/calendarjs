@@ -1,0 +1,3 @@
+Event = Backbone.Model.extend({
+
+});
