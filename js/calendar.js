@@ -242,4 +242,13 @@ EventCalendar = function(container) {
     'moveToRight' : dynamicCalendarView.refresh
   });
   this.dynamicCalendar = new Calendar('mm-yyyy');
+
+  // Arrows to go to left and right
+  $('span.left.arrow').click(function(e){
+    self.moveToLeft();
+  });
+
+  $('span.right.arrow').click(function(e){
+    self.moveToRight();
+  });
 }

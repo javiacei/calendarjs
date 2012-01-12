@@ -9,6 +9,8 @@
 
     <meta name="viewport" content="width=device-width,initial-scale=1">
 
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
+
     <script type="text/javascript" src="js/libs/jquery-1.7.1.min.js" /></script>
     <script type="text/javascript" src="js/libs/underscore-min.js" /></script>
     <script type="text/javascript" src="js/libs/dateFormat.js" /></script>
@@ -18,7 +20,7 @@
   <body>
 
     <div id="container">
-      <div id="alerts_section">
+      <div id="alerts_section" class="section">
         <h2>Alertas</h2>
         <div id="dates">
           <p id="date_prev"><span class="month"></span><span class="year"></span></p>
@@ -27,15 +29,16 @@
         </div>
 
         <div id="alerts_calendar_content">
-          <span class='left arrow'>
-            <a></a>
+          <span class='left arrow' style="width: 95px;">
+            <a style="left: 25px;"><</a>
           </span>
 
           <div id="static_alerts"></div>
+
           <div id="dynamic_alerts"></div>
 
           <span class='right arrow'>
-            <a></a>
+            <a style="right: 25px;">></a>
           </span>
         </div>
         <div id="leyend"></div>
@@ -45,7 +48,14 @@
     <!-- TEMPLATES -->
     <script type="text/template" id="calendar-list">
       <ul>
-        <% _.each(events, function(e) { %> <li><%= e.message %></li> <% }); %>
+        <% _.each(events, function(e) { %>
+          <li>
+            <div class="inside">
+              <span class="kind asesorAlert"></span>
+              <p><%= e.message %></p>
+            </div>
+          </li>
+        <% }); %>
       </ul>
     </script>
 
