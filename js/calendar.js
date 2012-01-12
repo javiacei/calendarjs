@@ -25,11 +25,15 @@ Date.prototype.nextMonthDate = function() {
   return nextDate;
 }
 
+/////////////////////////  EVENT ///////////////////////////////
 Event = function(message) {
   this.message = message;
 }
 
+/////////////////////////  CALENDAR ///////////////////////////////
 Calendar = function (format) {
+  var self = this;
+
   this.current = new Date();
 
   this.format = format;
@@ -60,6 +64,7 @@ Calendar = function (format) {
   }
 }
 
+/////////////////////////  SERVER PROXY ///////////////////////////////
 ServerProxy = function(baseUrl, engine, method) {
   this.baseUrl = baseUrl;
 
@@ -71,9 +76,6 @@ ServerProxy = function(baseUrl, engine, method) {
 
   this.get = function(/*Mixed*/ key) {
     if(_.isUndefined(this.cache[key])) {
-      console.log('Key ' + key + ' is empty');
-      console.log('Loading data into ' + key + '...');
-
       // Get elements from server
       var elements = new Array();
       for (i = 0; i < 5; i++) {
@@ -88,12 +90,54 @@ ServerProxy = function(baseUrl, engine, method) {
   }
 }
 
-EventCalendar = function() {
+
+EventCalendarListView = function(container) {
   var self = this;
 
-  this.staticCalendar = new Calendar('mm-yyyy');
+  this.el = $('#calendar-list');
 
-  this.dynamicCalendar = new Calendar('dd-mm-yyyy');
+  this.container = container;
+
+  this.refresh = function(/*EventCalendar*/ eventCalendar) {
+    // Data to draw
+    var data = {
+      events : eventCalendar.staticCalendar.events
+    }
+
+    var template = self.el.html();
+    self.container.empty().append(_.template(template, data));
+  }
+}
+
+
+EventCalendarTableView = function(container) {
+  var self = this;
+
+  this.el = $('#calendar-table');
+
+  this.container = container;
+
+  this.refresh = function(/*EventCalendar*/ eventCalendar) {
+    // Data to draw
+    var data = {
+      events : eventCalendar.dynamicCalendar.events
+    }
+
+    var template = self.el.html();
+    self.container.empty().append(_.template(template, data));
+  }
+}
+
+
+EventCalendar = function(container) {
+  var self = this;
+
+  this.el = $('#' + container);
+
+  this.listeners = {
+    'moveToLeft' : new Array(),
+    'moveToRight' : new Array()
+  };
 
   this.serverProxies = {
     staticCalendar: new ServerProxy(
@@ -128,9 +172,43 @@ EventCalendar = function() {
 
   this.moveToLeft = function() {
     this._moveTo('moveToPreviousMonth');
+    this.fire('moveToLeft');
+    return this;
   }
 
   this.moveToRight = function() {
     this._moveTo('moveToNextMonth');
+    this.fire('moveToRight');
+    return this;
   }
+
+  this.subscribe = function(/*Object*/ listeners) {
+    _.each(listeners, function(listener, ev){
+      self.listeners[ev].push(listener);
+    });
+    return this;
+  }
+
+  this.fire = function(ev) {
+    _.each(this.listeners[ev], function(handle){
+      handle(self);
+    });
+  }
+
+  // STATIC CALENDAR
+  var staticCalendarView = new EventCalendarListView($('#static_alerts'));
+  this.subscribe({
+    'moveToLeft' : staticCalendarView.refresh,
+    'moveToRight' : staticCalendarView.refresh
+  });
+  this.staticCalendar = new Calendar('mm-yyyy');
+
+
+  // DYNAMIC CALENDAR
+  var dynamicCalendarView = new EventCalendarTableView($('#dynamic_alerts'));
+  this.subscribe({
+    'moveToLeft' : dynamicCalendarView.refresh,
+    'moveToRight' : dynamicCalendarView.refresh,
+  });
+  this.dynamicCalendar = new Calendar('dd-mm-yyyy');
 }

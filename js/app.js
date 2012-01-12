@@ -1,3 +1,5 @@
-var calendar = new EventCalendar();
+var calendar = null;
 
-calendar.moveToLeft();
+$(document).ready(function(){
+  calendar = new EventCalendar('alerts_calendar_content');
+});

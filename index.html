@@ -18,7 +18,35 @@
   <body>
 
     <div id="container">
+      <div id="alerts_section">
+        <h2>Alertas</h2>
+        <div id="dates"></div>
+        <div id="alerts_calendar_content">
+          <span class='left arrow'>
+            <a></a>
+          </span>
+
+          <div id="static_alerts"></div>
+          <div id="dynamic_alerts"></div>
+
+          <span class='right arrow'>
+            <a></a>
+          </span>
+        </div>
+        <div id="leyend"></div>
+      </div>
     </div>
+
+    <!-- TEMPLATES -->
+    <script type="text/template" id="calendar-list">
+      <ul>
+        <% _.each(events, function(e) { %> <li><%= e.message %></li> <% }); %>
+      </ul>
+    </script>
+
+    <script type="text/template" id="calendar-table">
+      Table!!!
+    </script>
 
   </body>
 </html>
