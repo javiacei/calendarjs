@@ -10,7 +10,7 @@ EventCalendar = function(container) {
 
   this.serverProxies = {
     staticCalendar: new ServerProxy(
-      'http://etc-hogar.localhost.com/app_dev.php/home/house/16047/more-advisor-alerts',
+      'http://events.localhost.com/rest/static-events',
       $,
       'GET'
     ),
@@ -32,10 +32,7 @@ EventCalendar = function(container) {
       // Look for events by date (using calendar format)
       // Ex: proxy.get('01-2012') --> Give me events generated in January of 2012
       var eventsKey = calendar.currentDate().format(calendarFormat);
-      var events = proxy.get(eventsKey, {
-        month: calendar.currentDate().format('mm'),
-        year: calendar.currentDate().format('yyyy'),
-      }, true);
+      var events = proxy.get(eventsKey, /*Delete*/ calendar.currentDate());
 
       // Insert events into specific calendar
       calendar.addEvents(events);
