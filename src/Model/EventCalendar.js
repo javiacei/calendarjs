@@ -97,4 +97,19 @@ EventCalendar = function(container) {
   $('span.right.arrow').click(function(e){
     self.moveToRight();
   });
+
+  // ARROWS FUNCTIONALITY
+  var speed_effect = 200;
+  $('#alerts_calendar_content .arrow').hover(function(event) {
+    $(this).stop(true,true).animate({width:170}, speed_effect);
+      if ($(this).hasClass('left')) $(this).children('a').stop(true, true).animate({left:60}, speed_effect);
+      else $(this).children('a').stop(true, true).animate({right:60}, speed_effect);
+
+  }, function(event) {
+    $(this).stop(true,true).animate({width:95}, speed_effect);
+
+    if ($(this).hasClass('left')) $(this).children('a').stop(true, true).animate({left:25}, speed_effect);
+    else $(this).children('a').stop(true, true).animate({right:25}, speed_effect);
+
+  });
 }

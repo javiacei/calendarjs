@@ -42,7 +42,7 @@
 
         <div id="alerts_calendar_content">
           <span class='left arrow' style="width: 95px;">
-            <a style="left: 25px;"><</a>
+            <a style="left: 25px;"></a>
           </span>
 
           <div id="static_alerts"></div>
@@ -50,10 +50,14 @@
           <div id="dynamic_alerts"></div>
 
           <span class='right arrow'>
-            <a style="right: 25px;">></a>
+            <a style="right: 25px;"></a>
           </span>
         </div>
-        <div id="leyend"></div>
+
+        <ul id="leyend">
+          <li><span class="asesorAlert"></span><p>Alertas de uso y equipamiento</p></li>
+          <li><span class="consumeAlert"></span><p>Alertas de consumo</p></li>
+        </ul>
       </div>
     </div>
 
@@ -72,39 +76,61 @@
     </script>
 
     <script type="text/template" id="calendar-table">
-      <table>
+      <table cellspacing="0" cellpadding="0" border="0" style="width: <%= previousWidth %>px; left: <%= previousLeft  %>px;">
+        <tbody>
+          <% for(i = 1; i <= date.previousMonthDate().daysInMonth(); i++ ) { %>
+            <tr><% for(j = 1; j <= 3; j++) { %> <td>&nbsp;</td> <% } %></tr>
+          <% } %>
+        </tbody>
+
+        <tfoot>
+          <% for(i = 1; i <= date.previousMonthDate().daysInMonth(); i++ ) { %>
+            <tr><td><%= i %></td></tr>
+          <% } %>
+        </tfoot>
+      </table>
+
+      <table class="current" cellspacing="0" cellpadding="0" border="0" style="left: <%= currentLeft %>px; width: <%= currentWidth %>px";>
         <tbody>
           <% _.each(events, function(evs, day){ %>
             <tr>
-              <td>
-                <% if(_.isUndefined(evs[0])) {%>
-                  &nbsp;
-                <% }else{ %>
-                  <%= evs[0].get('message') %>
-                <% } %>
-              </td>
-              <td>
-                <% if(_.isUndefined(evs[1])) {%>
-                  &nbsp;
-                <% }else{ %>
-                  <%= evs[1].get('message') %>
-                <% } %>
-              </td>
-              <td>
-                <% if(_.isUndefined(evs[2])) {%>
-                  &nbsp;
-                <% }else{ %>
-                  <%= evs[2].get('message') %>
-                <% } %>
-              </td>
+              <% for(i = 0; i <= 2; i++) { %>
+                <td>
+                  <% if(_.isUndefined(evs[i])) {%> &nbsp; <% } else { %>
+                    <div class="alert collapsed moment_collapsed" style="z-index: 5;">
+                      <div class="inside">
+                        <span class="kind consumeAlert"></span>
+                        <div class="content">
+                          <p style="width: 259px;"><%= evs[i].get('message') %></p>
+                        </div>
+                      </div>
+                    </div>
+                  <% } %>
+                </td>
+              <% } %>
             </tr>
-          <% }) %>
+          <% }); %>
         </tbody>
 
         <!-- Days -->
         <tfoot>
           <% for (i = 1; i <= date.daysInMonth(); i++) { %>
-            <td><%= i %></td>
+            <tr><td><%= i %></td></tr>
+          <% } %>
+        </tfoot>
+      </table>
+
+
+      <table cellspacing="0" cellpadding="0" border="0" style="width: <%= nextWidth %>px; left: <%= nextLeft %>px;">
+        <tbody>
+          <% for(i = 1; i <= date.nextMonthDate().daysInMonth(); i++ ) { %>
+            <tr><% for(j = 1; j <= 3; j++) { %> <td>&nbsp;</td> <% } %></tr>
+          <% } %>
+        </tbody>
+
+        <tfoot>
+          <% for(i = 1; i <= date.nextMonthDate().daysInMonth(); i++ ) { %>
+            <tr><td><%= i %></td></tr>
           <% } %>
         </tfoot>
       </table>
