@@ -10,7 +10,9 @@ ServerProxy = function(url, engine, method) {
   this.cache = {};
 
   // Change using AJAX when you need it
-  this.get = function(/*Mixed*/ key, /*Delete this field*/ date) {
+  this.get = function(date) {
+    var key = date.format('mm-yyyy');
+
     if(_.isUndefined(this.cache[key])) {
       // Get elements from server
       var elements = new Array();

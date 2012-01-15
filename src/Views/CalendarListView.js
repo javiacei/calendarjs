@@ -1,14 +1,14 @@
-EventCalendarListView = function(container) {
+CalendarListView = function(container) {
   var self = this;
 
   this.el = $('#calendar-list');
 
   this.container = container;
 
-  this.refresh = function(/*EventCalendar*/ eventCalendar) {
+  this.refresh = function(/*EventCalendar*/ calendar) {
     // Data to draw
     var data = {
-      events : eventCalendar.staticCalendar.events
+      events : calendar.events
     }
 
     var template = self.el.html();

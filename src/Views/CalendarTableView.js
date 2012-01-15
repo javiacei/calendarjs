@@ -1,4 +1,4 @@
-EventCalendarTableView = function(container) {
+CalendarTableView = function(container) {
   var self = this;
 
   this.el = $('#calendar-table');
@@ -40,8 +40,8 @@ EventCalendarTableView = function(container) {
     return offset;
   }
 
-  this.refresh = function(/*EventCalendar*/ calendar) {
-    var date = calendar.dynamicCalendar.currentDate();
+  this.refresh = function(calendar) {
+    var date = calendar.currentDate();
 
     var currentWidth = self.columnTableWidth * date.daysInMonth();
     var currentLeft = self.getTableOffset(date);
@@ -54,7 +54,7 @@ EventCalendarTableView = function(container) {
 
     // Data to draw
     var data = {
-      events : calendar.dynamicCalendar.events,
+      events : calendar.events,
       date: date,
 
       previousWidth: previousWidth,
@@ -69,5 +69,7 @@ EventCalendarTableView = function(container) {
 
     var template = self.el.html();
     self.container.empty().append(_.template(template, data));
+
+    return this;
   }
 }
