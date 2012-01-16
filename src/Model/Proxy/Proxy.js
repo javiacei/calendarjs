@@ -52,7 +52,21 @@ ServerProxy = function(url, engine, method) {
         data: data,
         success: function(response) {
           // SaveInfo into cache
-          this.cache[key] = response;
+          var events = new Array();
+
+          // TODO: Estandarizar todo esto
+          _.each(response, function(evs, day){
+            if (_.isArray(evs)) {
+              events[day] = new Array();
+              _.each(evs, function(ev){
+                events[day].push(new Event({message: ev.message}));
+              });
+            } else {
+              events.push(new Event({message: evs.message}));
+            }
+          });
+
+          self.cache[key] = events;
         }
       });
 
