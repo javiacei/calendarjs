@@ -7,10 +7,10 @@ EventCalendar = function(container) {
 
   this.calendars = new Array();
 
-  this.updateDates = function() {
-    $('#date_prev span.month').html(this.current.previousMonthDate().format('mmmm yyyy'));
-    $('#date_current span.month').html(this.current.format('mmmm yyyy'));
-    $('#date_next span.month').html(this.current.nextMonthDate().format('mmmm yyyy'));
+  this.updateDates = function(date) {
+    $('#date_prev span.month').html(date.previousMonthDate().format('mmmm yyyy'));
+    $('#date_current span.month').html(date.format('mmmm yyyy'));
+    $('#date_next span.month').html(date.nextMonthDate().format('mmmm yyyy'));
   }
 
   this.addCalendar = function(calendar, calendarView) {
@@ -18,8 +18,11 @@ EventCalendar = function(container) {
 
     calendar.subscribe({
       'moveToPreviousMonth': calendarView.refresh,
-      'moveToNextMonth': calendarView.refresh
+      'moveToNextMonth': calendarView.refresh,
+      'init': calendarView.refresh
     });
+
+    calendar.init();
 
     return this;
   }
@@ -30,7 +33,7 @@ EventCalendar = function(container) {
     });
     this.current = this.current.previousMonthDate();
 
-    this.updateDates();
+    this.updateDates(this.current);
     return this;
   }
 
@@ -40,9 +43,12 @@ EventCalendar = function(container) {
     });
     this.current = this.current.nextMonthDate();
 
-    this.updateDates();
+    this.updateDates(this.current);
     return this;
   }
+
+  // Configuration
+  this.updateDates(this.current);
 
   // Arrows to go to left and right
   $('span.left.arrow').click(function(e){

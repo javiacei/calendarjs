@@ -1,55 +1,61 @@
-Calendar = Backbone.Model.extend({
-  events: null,
+Calendar = function(serverProxy) {
+  var self = this;
 
-  listeners: {
+  this.events = null;
+
+  this.proxy = serverProxy;
+
+  this.listeners = {
     'moveToPreviousMonth': new Array(),
-    'moveToNextMonth': new Array()
-  },
+    'moveToNextMonth': new Array(),
+    'init': new Array()
+  }
 
-  defaults: function() {
-    return {
-      current: new Date
-    };
-  },
+  this.current = new Date();
 
-  currentDate: function() {
-    return this.get('current');
-  },
+  // Methods
 
-  moveToPreviousMonth: function() {
-    this.set({
-      current: this.get('current').previousMonthDate()
-    });
-    this.addEvents(this.get('proxy').get(this.currentDate()));
+  this.init = function() {
+    this.addEvents(self.proxy.get(this.currentDate()));
+    this.fire('init');
+    return this;
+  }
+
+  this.currentDate = function() {
+    return this.current;
+  }
+
+  this.moveToPreviousMonth = function() {
+    this.current = this.current.previousMonthDate();
+
+    this.addEvents(self.proxy.get(this.currentDate()));
     this.fire('moveToPreviousMonth');
     return this;
   },
 
-  moveToNextMonth: function() {
-    this.set({
-      current: this.get('current').nextMonthDate()
-    });
-    this.addEvents(this.get('proxy').get(this.currentDate()));
+  this.moveToNextMonth = function() {
+    this.current = this.current.nextMonthDate();
+
+    this.addEvents(self.proxy.get(this.currentDate()));
     this.fire('moveToNextMonth');
     return this;
-  },
+  }
 
-  addEvents: function(evs) {
+  this.addEvents = function(evs) {
     this.events = evs;
-  },
+  }
 
-  subscribe: function(/*Object*/ listeners) {
-    var that = this;
+  this.subscribe = function(listeners) {
     _.each(listeners, function(listener, ev){
-      that.listeners[ev].push(listener);
+      self.listeners[ev].push(listener);
     });
-    return this;
-  },
 
-  fire: function(ev) {
-    var that = this;
+    return this;
+  }
+
+  this.fire = function(ev) {
     _.each(this.listeners[ev], function(handle){
-      handle(that);
+      handle(self);
     });
   }
-});
+}
