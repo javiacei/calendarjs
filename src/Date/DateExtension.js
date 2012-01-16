@@ -28,3 +28,10 @@ Date.prototype.nextMonthDate = function() {
   nextDate.setMonth(this.getMonth() + 1);
   return nextDate;
 }
+
+Date.prototype.isInTheSameMonth = function(date) {
+  return (
+    this.getMonth() == date.getMonth() &&
+    this.getFullYear() == date.getFullYear()
+  );
+}
