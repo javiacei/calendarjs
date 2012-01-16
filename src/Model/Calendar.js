@@ -1,5 +1,7 @@
-Calendar = function(serverProxy) {
+Calendar = function(serverProxy, id) {
   var self = this;
+
+  this.id = id;
 
   this.events = null;
 
@@ -16,7 +18,10 @@ Calendar = function(serverProxy) {
   // Methods
 
   this.init = function() {
-    this.addEvents(self.proxy.get(this.currentDate()));
+    this.addEvents(self.proxy.get(
+      this.currentDate().format('mm-yyyy'),
+      {id: this.id, month: this.current.format('mm'), year: this.current.format('yyyy')}
+    ));
     this.fire('init');
     return this;
   }
@@ -28,7 +33,10 @@ Calendar = function(serverProxy) {
   this.moveToPreviousMonth = function() {
     this.current = this.current.previousMonthDate();
 
-    this.addEvents(self.proxy.get(this.currentDate()));
+    this.addEvents(self.proxy.get(
+      this.currentDate().format('mm-yyyy'),
+      {id: this.id, month: this.current.format('mm'), year: this.current.format('yyyy')}
+    ));
     this.fire('moveToPreviousMonth');
     return this;
   },
@@ -36,7 +44,10 @@ Calendar = function(serverProxy) {
   this.moveToNextMonth = function() {
     this.current = this.current.nextMonthDate();
 
-    this.addEvents(self.proxy.get(this.currentDate()));
+    this.addEvents(self.proxy.get(
+      this.currentDate().format('mm-yyyy'),
+      {id: this.id, month: this.current.format('mm'), year: this.current.format('yyyy')}
+    ));
     this.fire('moveToNextMonth');
     return this;
   }
