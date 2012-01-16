@@ -1,9 +1,13 @@
-EventCalendar = function(container) {
+EventCalendar = function(container, start, end) {
   var self = this;
 
   this.el = $('#' + container);
 
   this.current = new Date();
+
+  this.end = end;
+
+  this.start = start;
 
   this.calendars = new Array();
 
@@ -11,6 +15,20 @@ EventCalendar = function(container) {
     $('#date_prev span.month').html(date.previousMonthDate().format('mmmm yyyy'));
     $('#date_current span.month').html(date.format('mmmm yyyy'));
     $('#date_next span.month').html(date.nextMonthDate().format('mmmm yyyy'));
+  }
+
+  this.updateArrows = function() {
+    if (this.current.isInTheSameMonth(self.end)) {
+      $('span.right.arrow').hide();
+    } else {
+      $('span.right.arrow').show();
+    }
+
+    if (this.current.isInTheSameMonth(self.start)) {
+      $('span.left.arrow').hide();
+    } else {
+      $('span.left.arrow').show();
+    }
   }
 
   this.addCalendar = function(calendar, calendarView) {
@@ -34,6 +52,7 @@ EventCalendar = function(container) {
     this.current = this.current.previousMonthDate();
 
     this.updateDates(this.current);
+    this.updateArrows();
     return this;
   }
 
@@ -44,6 +63,7 @@ EventCalendar = function(container) {
     this.current = this.current.nextMonthDate();
 
     this.updateDates(this.current);
+    this.updateArrows();
     return this;
   }
 
@@ -73,4 +93,6 @@ EventCalendar = function(container) {
     else $(this).children('a').stop(true, true).animate({right:25}, speed_effect);
 
   });
+
+  this.updateArrows();
 }
